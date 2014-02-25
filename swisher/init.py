@@ -3,7 +3,7 @@ import signal
 import yaml
 import argparse
 import server
-import linuxcardreader
+import cardreader
 
 def load_config(config_file):
     try:
@@ -20,7 +20,7 @@ def runMpd(config):
     run(instance, grabdevice)
 
 def run(instance, grabdevice):
-    reader = linuxcardreader.LinuxCardReader(
+    reader = cardreader.CardReader(
         grabdevice,
         instance.cardmanager.on_card,
         instance.cardmanager.update_devices_count
