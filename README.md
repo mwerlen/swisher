@@ -23,7 +23,7 @@ Software Dependencies
 Installing
 ----------
     > sudo apt-get install python-dev python-setuptools
-    > git clone https://github.com/thomasrynne/swisher.git
+    > git clone https://github.com/mwerlen/swisher.git
     > cd swisher
     > python setup.py install
     > swisher
