@@ -4,6 +4,7 @@ import yaml
 import argparse
 import server
 import cardreader
+import logging
 
 def load_config(config_file):
     try:
@@ -55,6 +56,8 @@ def main():
                    help='write logs to this file instead of the console and supress web access logs')
     parser.add_argument('--quiet', action="store_true",
                    help='suppress non error logging')
+    parser.add_argument('--verbose', action="store_true",
+                   help='enable verbose logs')
     args = parser.parse_args()
     if args.list_devices:
         cardreader.list_devices()
@@ -74,6 +77,8 @@ def main():
             config["cards-file"] = args.cards_file[0]
         if args.log:
             config["log"] = args.log[0]
+        if args.verbose:
+            logging.StreamHandler.setLevel(logging.debug)
         runMpd(config)
 
 if __name__ == "__main__":
