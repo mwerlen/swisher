@@ -78,7 +78,8 @@ def main():
         if args.log:
             config["log"] = args.log[0]
         if args.verbose:
-            logging.StreamHandler.setLevel(logging.debug)
+            mpdlogger = logging.getLogger('mpd')
+            mpdlogger.setLevel(logging.DEBUG)
         runMpd(config)
 
 if __name__ == "__main__":
