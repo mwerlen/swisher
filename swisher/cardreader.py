@@ -127,6 +127,7 @@ class CardReader:
                             os.read(self.wakeup_pipe[0], 1)
                         else:
                             for event in fd.read():
+                                print "EVENT RECEIVED:" + event
                                 if event.type == evdev.ecodes.EV_KEY:
                                     if event.value == 0 and 2 <= event.code and event.code <= 11:
                                         num = event.code - 1
