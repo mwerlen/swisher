@@ -2,16 +2,18 @@ import cherrypy
 import urllib
 import json
 
+
 class RadioSource:
     def __init__(self, mpdplayer):
         self._mpdplayer = mpdplayer
-        self._radiourls = { #hard coded list for now, should find radio stream service
-            "bbc4": ("BBC Radio 4", "http://www.bbc.co.uk/radio/listen/live/r4_aaclca.pls"),
-            "bbcws": ("BBC World Service", "http://www.bbc.co.uk/worldservice/meta/tx/nb/live/eneuk.pls"),
-            "bbc5": ("BBC 5 Live", "http://www.bbc.co.uk/radio/listen/live/r5l_aaclca.pls"),
-            "magic": ("Magic", "http://tx.whatson.com/icecast.php?i=magic1054.mp3.m3u"),
-            "heart": ("Heart", "http://media-ice.musicradio.com/HeartLondonMP3.m3u"),
-            "jazzfm": ("Jazz FM", "http://listen.onmyradio.net:8002/listen.pls")
+        self._radiourls = {  #hard coded list for now, should find radio stream service
+                             "bbc4": ("BBC Radio 4", "http://www.bbc.co.uk/radio/listen/live/r4_aaclca.pls"),
+                             "bbcws": (
+                             "BBC World Service", "http://www.bbc.co.uk/worldservice/meta/tx/nb/live/eneuk.pls"),
+                             "bbc5": ("BBC 5 Live", "http://www.bbc.co.uk/radio/listen/live/r5l_aaclca.pls"),
+                             "magic": ("Magic", "http://tx.whatson.com/icecast.php?i=magic1054.mp3.m3u"),
+                             "heart": ("Heart", "http://media-ice.musicradio.com/HeartLondonMP3.m3u"),
+                             "jazzfm": ("Jazz FM", "http://listen.onmyradio.net:8002/listen.pls")
         }
 
     def radios(self):
@@ -25,7 +27,7 @@ class RadioSource:
         return radio_code
 
     def _play_radio(self, code):
-        url = self._radiourls [code][1]
+        url = self._radiourls[code][1]
         m3u = False
 
         if url.endswith(".m3u"):
@@ -39,11 +41,13 @@ class RadioSource:
         else:
             pass
 
+
 class RadioPage:
     def __init__(self, context, radio):
         self._context = context
         self._radio = radio
+
     @cherrypy.expose
     def index(self):
-        return self._context.render("list.html","Radio", entries=self._radio.radios())
+        return self._context.render("list.html", "Radio", entries=self._radio.radios())
 

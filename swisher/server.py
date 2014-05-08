@@ -1,4 +1,3 @@
-
 import notifier
 import web
 import cardmanager
@@ -14,6 +13,7 @@ import jamendo
 import yaml
 import sys
 
+
 class Logger(object):
     def __init__(self, file):
         self.terminal = sys.stdout
@@ -23,11 +23,13 @@ class Logger(object):
         self.terminal.write(message)
         self.log.write(message)
 
+
 def load_config(config_file):
     try:
         return yaml.load(file(config_file)) or {}
     except IOError:
         return {}
+
 
 def createMpdController(current_dir, config, extra_pages):
     mpdhost = config.get("mpd-host", "localhost")
@@ -64,22 +66,24 @@ def createMpdController(current_dir, config, extra_pages):
         enrichers += handler.enrichers()
 
     actions = mpdplayerx.actions() + shellx.actions()
-    services = [ mpdplayerx ] 
+    services = [mpdplayerx]
     instance = Server(current_dir, cardsfile, log, httpport, notifierx,
-      use_card_service, handlers, enrichers, actions, pages, services)
+                      use_card_service, handlers, enrichers, actions, pages, services)
     return instance
-        
+
+
 class Server:
-    def __init__(self, resources_path, cardsfile, log, http_port, notifierx, use_cardservice, handlers, enrichers, actionsx, pages, services):
+    def __init__(self, resources_path, cardsfile, log, http_port, notifierx, use_cardservice, handlers, enrichers,
+                 actionsx, pages, services):
         self.notifier = notifierx
         self.cardstore = cards.CardStore(cardsfile, use_cardservice)
         self.services = services
         self._swisher_dir = resources_path
 
-        self.actions = actions.Actions(self.cardstore, 
-          handlers,
-          enrichers,
-          actionsx
+        self.actions = actions.Actions(self.cardstore,
+                                       handlers,
+                                       enrichers,
+                                       actionsx
         )
         self.cardmanager = cardmanager.CardManager(self.cardstore, self.actions, self.notifier.notify)
 
@@ -94,10 +98,12 @@ class Server:
 
     def swisher_dir(self):
         return self._swisher_dir
+
     def start(self):
         self.web.start()
         for service in self.services:
             service.start()
+
     def stop(self):
         cherrypy.log("Stopping swisher", severity=logging.INFO)
         self.notifier.stop()

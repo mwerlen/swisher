@@ -13,12 +13,12 @@ import threading
 #support this (most do) and the user must have access to
 # /dev/input/* (this is often achieved by being in the input group)
 class CardReader:
-    
     class FileSystemEventHandler(pyinotify.ProcessEvent):
         def __init__(self, reader):
             self.reader = reader
+
         def process_IN_CREATE(self, event):
-            time.sleep(0.2) #device does not seem to be ready without this pause
+            time.sleep(0.2)  #device does not seem to be ready without this pause
             self.reader.add_device_if_match(event.pathname)
             self.reader.devices_change()
 
@@ -68,7 +68,7 @@ class CardReader:
             device = evdev.InputDevice(path)
             if self.is_keyboard(device):
                 if self.grab_device == "":
-                   self.open_keyboards[path] = device
+                    self.open_keyboards[path] = device
                 else:
                     if device.name.strip() == self.grab_device:
                         self.open_keyboards[path] = device
@@ -77,7 +77,7 @@ class CardReader:
                         device.close()
             else:
                 device.close()
-        except:#IOError: [Errno 25] Inappropriate ioctl for device (on mouse)
+        except:  #IOError: [Errno 25] Inappropriate ioctl for device (on mouse)
             pass
 
     def is_keyboard(self, device):
@@ -90,8 +90,9 @@ class CardReader:
         self.fsnotifier.stop()
         self.wakeup_reader_thread()
         self.close_all()
+
     def close_all(self):
-        for path,device in self.open_keyboards.items():
+        for path, device in self.open_keyboards.items():
             if self.grab_device != "":
                 device.ungrab()
             device.close()
@@ -119,31 +120,36 @@ class CardReader:
             if len(self.open_keyboards) == 0:
                 self.event.wait()
             while self.running:
-              try:
-               r,w,x = select.select(self.open_keyboards.values() + [self.wakeup_pipe[0]], [], [])
-               for fd in r:
-                if (type(self.wakeup_pipe[0]) == type(fd)) and (self.wakeup_pipe[0] == fd):
-                  os.read(self.wakeup_pipe[0], 1)
-                else:
-                  for event in fd.read():
-                   if event.type == evdev.ecodes.EV_KEY:
-                    if event.value == 0 and 2 <= event.code and event.code <= 11:
-                      num = event.code - 1
-                      if num == 10:
-                        num = 0
-                      if len(keys) > 0 or num != 0: #we ignore the leading 3 zeros because sometimes they are missed
-                        keys.append(str(num))
-                      if len(keys) == 7:
-                       card = "".join(keys)
-                       del keys[:]
-                       self.on_card(card)
-              except select.error:
-               pass
+                try:
+                    r, w, x = select.select(self.open_keyboards.values() + [self.wakeup_pipe[0]], [], [])
+                    for fd in r:
+                        if (type(self.wakeup_pipe[0]) == type(fd)) and (self.wakeup_pipe[0] == fd):
+                            os.read(self.wakeup_pipe[0], 1)
+                        else:
+                            for event in fd.read():
+                                if event.type == evdev.ecodes.EV_KEY:
+                                    if event.value == 0 and 2 <= event.code and event.code <= 11:
+                                        num = event.code - 1
+                                        if num == 10:
+                                            num = 0
+                                        if len(
+                                                keys) > 0 or num != 0:  #we ignore the leading 3 zeros because sometimes they are missed
+                                            keys.append(str(num))
+                                        if len(keys) == 7:
+                                            card = "".join(keys)
+                                            del keys[:]
+                                            self.on_card(card)
+                except select.error:
+                    pass
+
+
 def list_devices():
     def on_card(card):
         pass
+
     def on_device():
         pass
+
     reader = CardReader("", on_card, on_device)
     reader.add_keyboards()
     for device in reader.open_keyboards.values():
@@ -152,14 +158,19 @@ def list_devices():
         print "No devices found"
     reader.close_all()
 
+
 def main():
     def on_card(card):
         print "CARD:" + card
+
     def on_devices_change(n):
         print "Devices: " + n
+
     reader = CardReader("", on_card, on_devices_change)
+
     def signal_handler(signal, frame):
         reader.stop()
+
     signal.signal(signal.SIGINT, signal_handler)
     reader.start()
     signal.pause()

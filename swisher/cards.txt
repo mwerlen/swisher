@@ -1,0 +1,6 @@
+{"number": "7345930", "value": {"action": "stop"}, "datetime": "2014-05-07T19:05:12.289524"}
+{"number": "1272892", "value": {"_mpd_playlist": "Augustin - Poissons"}, "datetime": "2014-05-07T19:29:58.246007"}
+{"number": "7361177", "value": {"_mpd_playlist": "Augustin - Crocodile"}, "datetime": "2014-05-07T19:30:02.956260"}
+{"number": "1291209", "value": {"_mpd_playlist": "Augustin - Barnab\u00e9 et la fus\u00e9e"}, "datetime": "2014-05-07T19:30:19.508152"}
+{"number": "1268042", "value": {"_mpd_playlist": "Augustin - Berceuses"}, "datetime": "2014-05-07T19:30:30.650078"}
+{"number": "1123444", "value": {"_mpd_playlist": "Augustin - Souris"}, "datetime": "2014-05-07T19:30:41.707969"}

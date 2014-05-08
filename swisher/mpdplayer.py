@@ -25,6 +25,7 @@ class MpdPlayer:
 
     def start(self):
         self.cancel_connect.clear()
+
         def _current_status():
             song = self.notification.currentsong()
             status = self.notification.status()
@@ -34,60 +35,66 @@ class MpdPlayer:
                 return "Paused"
             else:
                 return song.get("title", "")
+
         def _keep_connected():
-           retry_count = 0
-           while not self.cancel_connect.is_set(): #reconnect loop
-               try:
-                   self.notification.connect(self.host, self.port)
-                   self.client.connect(self.host, self.port)
-                   retry_count = 0
-                   latest_status = ""
-                   while not self.cancel_connect.is_set(): #status loop
-                       current_status = _current_status()
-                       if latest_status != current_status:
-                           latest_status = current_status
-                           self.notify("mpd", latest_status)
-                       try:
-                           response = self.notification.idle()
-                       except:
-                           pass
-               except: #connect/reconnect failed
-                   #print traceback.format_exc()
-                   pass
-               #close connections to get in a consistent state
-               try:
-                   self.notification.disconnect()
-               except:
-                   pass
-               try:
-                   self.client.disconnect()
-               except:
-                   pass
-               if retry_count == 1: #Allow one retry before assuming MPD is down
-                   self.notify("mpd", "No MPD")
-               self.cancel_connect.wait(min(retry_count*3,20)) #reconnect inverval
-               retry_count = retry_count + 1
+            retry_count = 0
+            while not self.cancel_connect.is_set():  #reconnect loop
+                try:
+                    self.notification.connect(self.host, self.port)
+                    self.client.connect(self.host, self.port)
+                    retry_count = 0
+                    latest_status = ""
+                    while not self.cancel_connect.is_set():  #status loop
+                        current_status = _current_status()
+                        if latest_status != current_status:
+                            latest_status = current_status
+                            self.notify("mpd", latest_status)
+                        try:
+                            response = self.notification.idle()
+                        except:
+                            pass
+                except:  #connect/reconnect failed
+                    #print traceback.format_exc()
+                    pass
+                #close connections to get in a consistent state
+                try:
+                    self.notification.disconnect()
+                except:
+                    pass
+                try:
+                    self.client.disconnect()
+                except:
+                    pass
+                if retry_count == 1:  #Allow one retry before assuming MPD is down
+                    self.notify("mpd", "No MPD")
+                self.cancel_connect.wait(min(retry_count * 3, 20))  #reconnect inverval
+                retry_count = retry_count + 1
+
         thread.start_new_thread(_keep_connected, ())
+
     def stop(self):
         self.cancel_connect.set()
         self.notification.noidle()
 
     def actions(self):
         return self._simple_actions() + self._volume_actions()
+
     def _simple_actions(self):
         return [
-          actions.Action("Stop", "stop", self.client.stop),
-          actions.Action("Pause", "pause", self.client.pause),
-          actions.Action("Next", "next", self.client.next),
-          actions.Action("Previous", "previous", self.client.previous),
+            actions.Action("Stop", "stop", self.client.stop),
+            actions.Action("Pause", "pause", self.client.pause),
+            actions.Action("Next", "next", self.client.next),
+            actions.Action("Previous", "previous", self.client.previous),
         ]
 
     def volume_f(self, level):
         def do_volume():
             self.client.setvol(str(level))
+
         return do_volume
+
     def _volume_actions(self):
-        return [actions.Action("Volume " + str(v), "v" + str(v), self.volume_f(v)) for v in range(0,110,10)]
+        return [actions.Action("Volume " + str(v), "v" + str(v), self.volume_f(v)) for v in range(0, 110, 10)]
 
     def play_all(self, urlorpaths):
         self.client.stop()

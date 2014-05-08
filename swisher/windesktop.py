@@ -4,6 +4,7 @@ import notifier
 import spotify
 import sys
 
+
 def runSpotify():
     log = server.Logger(open("swisher-log.txt", "a"))
     sys.stdout = log
@@ -21,11 +22,13 @@ def runSpotify():
     services = []
     current_dir = winstart.find_current_dir()
     instance = server.Server(current_dir, cardsfile, "cherry-log.txt", httpport, notifierx,
-      use_card_service, handlers, enrichers, actions, pages, services)
+                             use_card_service, handlers, enrichers, actions, pages, services)
     winstart.run(instance)
+
 
 def main():
     runSpotify()
-    
+
+
 if __name__ == "__main__":
     main()

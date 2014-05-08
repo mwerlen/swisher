@@ -1,6 +1,7 @@
 import cherrypy
 import json
 
+
 class Action:
     def __init__(self, name, code, f):
         self.name = name
@@ -53,14 +54,17 @@ class Actions():
             else:
                 handler()
         return None
+
     def actions(self):
         return self._actions
+
 
 class ActionsPage():
     def __init__(self, context, actions):
         self._context = context
         self._actions = actions
+
     @cherrypy.expose
     def index(self):
-        return self._context.render("actions.html","Actions", actions=self._actions.actions())
+        return self._context.render("actions.html", "Actions", actions=self._actions.actions())
 

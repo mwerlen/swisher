@@ -6,11 +6,13 @@ import server
 import cardreader
 import logging
 
+
 def load_config(config_file):
     try:
         return yaml.load(file(config_file)) or {}
     except IOError:
         return {}
+
 
 def runMpd(config):
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -20,6 +22,7 @@ def runMpd(config):
     #  httpport, jamendo_clientid, jamendo_username, use_card_service, [])
     run(instance, grabdevice)
 
+
 def run(instance, grabdevice):
     reader = cardreader.CardReader(
         grabdevice,
@@ -28,36 +31,38 @@ def run(instance, grabdevice):
     )
     instance.start()
     reader.start()
+
     def signal_handler(signal, frame):
         reader.stop()
-        instance.stop()	
+        instance.stop()
+
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
     signal.pause()
-    
+
 
 def main():
     parser = argparse.ArgumentParser(description='RFID mpd client')
     parser.add_argument('--list-devices', action="store_true",
-                   help='list all present keyboard and rfid reader devices')
-    parser.add_argument('--config',  nargs=1, metavar="filename",
-                   help='read from config file (same values as these options)')
+                        help='list all present keyboard and rfid reader devices')
+    parser.add_argument('--config', nargs=1, metavar="filename",
+                        help='read from config file (same values as these options)')
     parser.add_argument('--grab-device', metavar='name', nargs=1,
-                   help='grab and read events from the named device')
+                        help='grab and read events from the named device')
     parser.add_argument('--mpd-host', metavar='host', nargs=1,
-                   help='the mpd server hostname (localhost)')
+                        help='the mpd server hostname (localhost)')
     parser.add_argument('--mpd-port', metavar='port', nargs=1,
-                   help='the mpd port (6600)')
+                        help='the mpd port (6600)')
     parser.add_argument('--http-port', metavar='port', nargs=1,
-                   help='the port to run the internal webserver on (3344)')
+                        help='the port to run the internal webserver on (3344)')
     parser.add_argument('--cards-file', metavar='filename', nargs=1,
-                   help='the file to read and write the cards database to (cards.txt)')
+                        help='the file to read and write the cards database to (cards.txt)')
     parser.add_argument('--log', metavar='filename', nargs=1,
-                   help='write logs to this file instead of the console and supress web access logs')
+                        help='write logs to this file instead of the console and supress web access logs')
     parser.add_argument('--quiet', action="store_true",
-                   help='suppress non error logging')
+                        help='suppress non error logging')
     parser.add_argument('--verbose', action="store_true",
-                   help='enable verbose logs')
+                        help='enable verbose logs')
     args = parser.parse_args()
     if args.list_devices:
         cardreader.list_devices()
@@ -81,6 +86,7 @@ def main():
             mpdlogger = logging.getLogger('mpd')
             mpdlogger.setLevel(logging.DEBUG)
         runMpd(config)
+
 
 if __name__ == "__main__":
     main()
