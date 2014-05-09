@@ -127,8 +127,9 @@ class CardReader:
                             os.read(self.wakeup_pipe[0], 1)
                         else:
                             for event in fd.read():
-                                print "EVENT RECEIVED: " + str(event)
-                                if event.type == evdev.ecodes.EV_KEY:
+                                if event.type == evdev.ecodes.EV_SYN:
+                                    print "EVENT Separation: " + str(event)
+                                elif event.type == evdev.ecodes.EV_KEY:
                                     if event.value == 0 and 2 <= event.code and event.code <= 11:
                                         num = event.code - 1
                                         if num == 10:
@@ -142,6 +143,18 @@ class CardReader:
                                             print "got card " + card
                                             del keys[:]
                                             self.on_card(card)
+                                    elif event.value == 0 and event.code == evdev.ecodes.KEY_ENTER:
+                                        print "Key enter"
+                                    elif event.value == 0:
+                                        print "Unknown type 1 event : " + str(event)
+                                elif event.type == evdev.ecodes.EV_MSC:
+                                    if event.code == evdev.ecodes.MSC_SCAN:
+                                        print "Misc-scan: " + str(event.value)
+                                    else:
+                                        print "Other Misc event : " + str(event)
+                                else:
+                                    print "OTHER EVENT RECEIVED: " + str(event)
+
                 except select.error:
                     pass
 
