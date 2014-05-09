@@ -129,6 +129,7 @@ class CardReader:
                             for event in fd.read():
                                 if event.type == evdev.ecodes.EV_SYN:
                                     #print "EVENT Separation: " + str(event)
+                                    pass
                                 elif event.type == evdev.ecodes.EV_KEY:
                                     if event.value == 0 and 2 <= event.code and event.code <= 11:
                                         num = event.code - 1
@@ -150,6 +151,7 @@ class CardReader:
                                 elif event.type == evdev.ecodes.EV_MSC:
                                     if event.code == evdev.ecodes.MSC_SCAN:
                                         #print "Misc-scan: " + str(event.value)
+                                        pass
                                     else:
                                         print "Other Misc event : " + str(event)
                                 else:
