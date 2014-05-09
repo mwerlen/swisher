@@ -128,13 +128,13 @@ class CardReader:
                         else:
                             for event in fd.read():
                                 if event.type == evdev.ecodes.EV_SYN:
-                                    print "EVENT Separation: " + str(event)
+                                    #print "EVENT Separation: " + str(event)
                                 elif event.type == evdev.ecodes.EV_KEY:
                                     if event.value == 0 and 2 <= event.code and event.code <= 11:
                                         num = event.code - 1
                                         if num == 10:
                                             num = 0
-                                        print "number " + str(num) + " (" + "".join(keys) + ")"
+                                        print "number " + str(num) + " (" + "".join(keys) + str(num) + ")"
                                         if len(
                                                 keys) > 0 or num != 0:  #we ignore the leading 3 zeros because sometimes they are missed
                                             keys.append(str(num))
@@ -149,7 +149,7 @@ class CardReader:
                                         print "Unknown type 1 event : " + str(event)
                                 elif event.type == evdev.ecodes.EV_MSC:
                                     if event.code == evdev.ecodes.MSC_SCAN:
-                                        print "Misc-scan: " + str(event.value)
+                                        #print "Misc-scan: " + str(event.value)
                                     else:
                                         print "Other Misc event : " + str(event)
                                 else:
