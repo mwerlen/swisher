@@ -127,17 +127,19 @@ class CardReader:
                             os.read(self.wakeup_pipe[0], 1)
                         else:
                             for event in fd.read():
-                                print "EVENT RECEIVED:" + str(event)
+                                print "EVENT RECEIVED: " + str(event)
                                 if event.type == evdev.ecodes.EV_KEY:
                                     if event.value == 0 and 2 <= event.code and event.code <= 11:
                                         num = event.code - 1
                                         if num == 10:
                                             num = 0
+                                        print "number " + str(num) + " (" + "".join(keys) + ")"
                                         if len(
                                                 keys) > 0 or num != 0:  #we ignore the leading 3 zeros because sometimes they are missed
                                             keys.append(str(num))
                                         if len(keys) == 7:
                                             card = "".join(keys)
+                                            print "got card " + card
                                             del keys[:]
                                             self.on_card(card)
                 except select.error:
