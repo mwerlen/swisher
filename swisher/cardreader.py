@@ -133,7 +133,7 @@ class CardReader:
                                         num = event.code - 1
                                         if num == 10:
                                             num = 0
-                                        print "Number " + str(num) + " (" + "".join(keys) + str(num) + ")"
+                                        #print "Number " + str(num) + " (" + "".join(keys) + str(num) + ")"
                                         #we ignore the leading 3 zeros because sometimes they are missed
                                         #if len(keys) > 0 or num != 0:
                                         keys.append(str(num))
