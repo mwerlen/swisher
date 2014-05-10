@@ -131,7 +131,7 @@ class CardReader:
                                 # Only read
                                 # event.value == 1 => Key pressed
                                 # event.value == 0 => Key released
-                                if event.type == evdev.ecodes.EV_KEY and event.value == 1:
+                                if event.type == evdev.ecodes.EV_KEY and event.value == 0:
                                     # In case of new char (1, 2, 3, 4, 5, 6, 7, 8, 9 or 0)
                                     if evdev.ecodes.KEY_1 <= event.code <= evdev.ecodes.KEY_0:
                                         num = (event.code - 1) % 10
