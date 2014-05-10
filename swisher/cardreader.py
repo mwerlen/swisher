@@ -128,9 +128,7 @@ class CardReader:
                             os.read(self.wakeup_pipe[0], 1)
                         else:
                             for event in fd.read():
-                                if event.type == evdev.ecodes.EV_SYN:
-                                    cardLog += "-"
-                                elif event.type == evdev.ecodes.EV_KEY:
+                                if event.type == evdev.ecodes.EV_KEY:
                                     # In case of new char
                                     if event.value == 0 and 2 <= event.code <= 11:
                                         num = event.code - 1
@@ -138,37 +136,21 @@ class CardReader:
                                             num = 0
                                         #we ignore the leading 3 zeros because sometimes they are missed
                                         if len(keys) > 0 or num != 0:
-                                            cardLog += " Number " + str(num) + " (" + "".join(keys) + str(num) + ")\n"
+                                            #cardLog += " Number " + str(num) + " (" + "".join(keys) + str(num) + ")\n"
                                             keys.append(str(num))
                                     # In case of end of number
                                     elif event.value == 0 and event.code == evdev.ecodes.KEY_ENTER:
                                         card = "".join(keys)
                                         if len(keys) >= 7:
-                                            print " Key enter - got card" + card + "\n"
+                                            print "Key enter - got card" + card + "\n"
                                             self.on_card(card)
                                         else:
-                                            print "-------------------------------------------------"
-                                            print "--------------- CARD LOG ------------------------"
-                                            print "-------------------------------------------------"
-                                            print cardLog
-                                            print "Key enter - but number is not complete..."
-                                            print "...aborting read with number=" + card
-                                            print "-------------------------------------------------"
-                                            print "------------------ END --------------------------"
-                                            print "-------------------------------------------------"
+                                            #print "--------------- CARD LOG ------------------------"
+                                            #print cardLog
+                                            print "Key enter - incomplete number " + card
+                                            #print "------------------ END --------------------------"
                                         del keys[:]
-                                        cardLog = ""
-                                    elif event.value == 0:
-                                        cardLog += " Unknown type 1 event : " + str(event) + "\n"
-                                elif event.type == evdev.ecodes.EV_MSC:
-                                    if event.code == evdev.ecodes.MSC_SCAN:
-                                        #cardLog += "Misc-scan: " + str(event.value) + "\n"
-                                        pass
-                                    else:
-                                        cardLog += "Other Misc event : " + str(event) + "\n"
-                                else:
-                                    cardLog += "OTHER EVENT RECEIVED: " + str(event) + "\n"
-
+                                        #cardLog = ""
                 except select.error:
                     pass
 
