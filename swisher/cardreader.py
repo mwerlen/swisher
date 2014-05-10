@@ -129,7 +129,9 @@ class CardReader:
                         else:
                             for event in fd.read():
                                 # Only read
-                                if event.type == evdev.ecodes.EV_KEY and event.value == 0:
+                                # event.value == 1 => Key pressed
+                                # event.value == 0 => Key released
+                                if event.type == evdev.ecodes.EV_KEY and event.value == 1:
                                     # In case of new char (1, 2, 3, 4, 5, 6, 7, 8, 9 or 0)
                                     if evdev.ecodes.KEY_1 <= event.code <= evdev.ecodes.KEY_0:
                                         num = (event.code - 1) % 10
@@ -140,12 +142,13 @@ class CardReader:
                                     # In case of 'ENTER' key, if not seven char then, we missed some, cancel.
                                     # We empty the num buffer (keys) to avoid shifting
                                     elif event.code == evdev.ecodes.KEY_ENTER:
-                                        if len(keys) > 5:
+                                        if len(keys) >= 5:
                                             print "Missing numbers in card number. Read canceled - " + "".join(keys)
                                         del keys[:]
 
-                                    # If we get our 7 numbers, fire on_card
-                                    if len(keys) == 7:
+                                    # We just check the first 4 cars to minimize read error effects
+                                    # If we get our 4 first numbers, fire on_card
+                                    if len(keys) == 4:
                                         self.on_card("".join(keys))
                                         del keys[:]
                 except select.error as e:
