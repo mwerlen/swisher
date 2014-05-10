@@ -128,30 +128,27 @@ class CardReader:
                             os.read(self.wakeup_pipe[0], 1)
                         else:
                             for event in fd.read():
-                                if event.type == evdev.ecodes.EV_KEY:
-                                    # In case of new char
-                                    if event.value == 0 and 2 <= event.code <= 11:
-                                        num = event.code - 1
-                                        if num == 10:
-                                            num = 0
-                                        #we ignore the leading 3 zeros because sometimes they are missed
+                                # Only read
+                                if event.type == evdev.ecodes.EV_KEY and event.value == 0:
+                                    # In case of new char (1, 2, 3, 4, 5, 6, 7, 8, 9 or 0)
+                                    if evdev.ecodes.KEY_1 <= event.code <= evdev.ecodes.KEY_0:
+                                        num = (event.code - 1) % 10
+                                        #we ignore the leading zeros because sometimes they are missed
                                         if len(keys) > 0 or num != 0:
-                                            #cardLog += " Number " + str(num) + " (" + "".join(keys) + str(num) + ")\n"
                                             keys.append(str(num))
-                                    # In case of end of number
-                                    elif event.value == 0 and event.code == evdev.ecodes.KEY_ENTER:
-                                        card = "".join(keys)
-                                        if len(keys) >= 7:
-                                            print "Key enter - got card" + card + "\n"
-                                            self.on_card(card)
-                                        else:
-                                            #print "--------------- CARD LOG ------------------------"
-                                            #print cardLog
-                                            print "Key enter - incomplete number " + card
-                                            #print "------------------ END --------------------------"
+
+                                    # In case of 'ENTER' key, if not seven char then, we missed some, cancel.
+                                    # We empty the num buffer (keys) to avoid shifting
+                                    elif event.code == evdev.ecodes.KEY_ENTER:
                                         del keys[:]
-                                        #cardLog = ""
-                except select.error:
+
+                                    # If we get our 7 numbers, fire on_card
+                                    if len(keys) == 7:
+                                        card = "".join(keys)
+                                        self.on_card(card)
+                                        del keys[:]
+                except select.error as e:
+                    print str(e)
                     pass
 
 
