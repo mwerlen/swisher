@@ -140,12 +140,13 @@ class CardReader:
                                     # In case of 'ENTER' key, if not seven char then, we missed some, cancel.
                                     # We empty the num buffer (keys) to avoid shifting
                                     elif event.code == evdev.ecodes.KEY_ENTER:
+                                        if len(keys) > 5:
+                                            print "Missing numbers in card number. Read canceled - " + "".join(keys)
                                         del keys[:]
 
                                     # If we get our 7 numbers, fire on_card
                                     if len(keys) == 7:
-                                        card = "".join(keys)
-                                        self.on_card(card)
+                                        self.on_card("".join(keys))
                                         del keys[:]
                 except select.error as e:
                     print str(e)
